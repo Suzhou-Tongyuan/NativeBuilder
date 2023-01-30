@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TypedDict, TYPE_CHECKING, cast
 if TYPE_CHECKING:
-    from typing_extensions import NotRequired, TypeGuard
+    from typing_extensions import NotRequired, TypeGuard, Literal
 
 class FalseInfo:
     def __init__(self, message: str):
@@ -47,6 +47,8 @@ class Project(TypedDict):
     triplet: NotRequired[Triplet]
     host_triplet: NotRequired[Triplet]
     always_mingw: NotRequired[bool]
+    type: NotRequired[Literal['console', 'library']]
+    cpp_standard: NotRequired[str]
 
 def validate_project(data) -> TypeGuard[Project]:
     if not isinstance(data, dict):
@@ -65,12 +67,27 @@ def validate_project(data) -> TypeGuard[Project]:
         if not msg:
             return msg
 
-    msg = validate_triplet(data.get("triplet", {}))
+    triplet = data.get("triplet", {})
+    if not triplet:
+        return True
+    msg = validate_triplet(triplet)
     if not msg:
         return msg
-    msg = validate_triplet(data.get("host_triplet", {}))
+
+    host_triplet = data.get("host_triplet", {})
+    if not host_triplet:
+        return True
+    msg = validate_triplet(host_triplet)
     if not msg:
         return msg
+
     if not isinstance(data.get("always_mingw", False), bool):
         return cast(bool, FalseInfo("project.always_mingw must be a bool"))
+
+    if data.get("type", "console") not in ('console', 'library'):
+        return cast(bool, FalseInfo("project.type must be a str"))
+
+    if not isinstance(data.get("cpp_standard", "c++17"), str):
+        return cast(bool, FalseInfo("project.cpp_standard must be a str"))
+
     return True

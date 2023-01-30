@@ -26,6 +26,7 @@ class Cmd:
             deps.append(package_name)
             VCPkg.call_vcpkg("install", package_name)
         proj["dependencies"] = deps
+        Config.write()
         print(Fore.GREEN + f"install {package_name} success!")
 
     @staticmethod
@@ -36,6 +37,7 @@ class Cmd:
             VCPkg.call_vcpkg("remove", package_name)
             deps.remove(package_name)
         proj["dependencies"] = deps
+        Config.write()
         print(Fore.GREEN + f"remove {package_name} success!")
 
 def main():
