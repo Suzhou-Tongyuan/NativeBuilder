@@ -1,0 +1,76 @@
+cmake_minimum_required(VERSION 3.21)
+project(example VERSION 1.0.0)
+# find_package(raylib 3.5.0 REQUIRED)
+
+# https://cmake.org/cmake/help/latest/module/GenerateExportHeader.html
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# add_compile_definitions(RAYGUI_IMPLEMENTATION)
+
+# Requires C11 standard
+set(CMAKE_C_STANDARD 99)
+
+# Requires C++ 20 standard
+set(CMAKE_CXX_STANDARD 17)
+
+# add_definitions(-w)
+
+if (WIN32)
+    include_directories(./GitDependencies/microsoft/vcpkg/installed/x64-mingw-dynamic/include)
+    link_directories(./GitDependencies/microsoft/vcpkg/installed/x64-mingw-dynamic/lib)
+elseif (APPLE)
+    include_directories(./GitDependencies/microsoft/vcpkg/installed/x64-osx/include)
+    link_directories(./GitDependencies/microsoft/vcpkg/installed/x64-osx/lib)
+else()
+    include_directories(./GitDependencies/microsoft/vcpkg/installed/x64-linux/include)
+    link_directories(./GitDependencies/microsoft/vcpkg/installed/x64-linux/lib)
+endif()
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+if (BUILD_SHARED_LIBS)
+    add_library(${PROJECT_NAME} SHARED src/library.cpp)
+    include(GenerateExportHeader)
+    GENERATE_EXPORT_HEADER(${PROJECT_NAME}
+        EXPORT_FILE_NAME exmample_export.h
+        EXPORT_MACRO_NAME EXAMPLE_EXPORT
+    )
+else()
+    add_executable(${PROJECT_NAME} src/main.cpp)
+endif()
+
+target_link_libraries(${PROJECT_NAME} yogacore)
+target_link_libraries(${PROJECT_NAME} raylib)
+
+# if (!APPLE)
+#     message("NOT APPLE: using static build")
+#     target_link_options(${PROJECT_NAME} PRIVATE -static -static-libgcc -static-libstdc++)
+# endif()
+
+# target_link_libraries(${PROJECT_NAME} gc)
+
+if (WIN32)
+    message("Win32: linking libraries")
+    target_link_libraries(${PROJECT_NAME} ntdll)
+    target_link_libraries(${PROJECT_NAME} msvcrt)
+    target_link_libraries(${PROJECT_NAME} kernel32)
+    target_link_libraries(${PROJECT_NAME} user32)
+    target_link_libraries(${PROJECT_NAME} winmm)
+endif()
+
+# Checks if OSX and links appropriate frameworks (only required on MacOS)
+if (APPLE)
+    target_link_libraries(${PROJECT_NAME} "-framework IOKit")
+    target_link_libraries(${PROJECT_NAME} "-framework Cocoa")
+    target_link_libraries(${PROJECT_NAME} "-framework OpenGL")
+endif()
+
+# add_custom_command(TARGET example POST_BUILD
+#   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:example> $<TARGET_FILE_DIR:example>
+#   COMMAND_EXPAND_LISTS
+# )
