@@ -45,7 +45,7 @@ class Project(TypedDict):
     dependencies: NotRequired[list[str]]
     author: NotRequired[str | list[Author]]
     triplet: NotRequired[Triplet]
-    host_triplet: NotRequired[Triplet]
+    host_triplet: Triplet | None
     always_mingw: NotRequired[bool]
     type: NotRequired[Literal['console', 'library']]
     cpp_standard: NotRequired[str]

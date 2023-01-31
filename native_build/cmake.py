@@ -6,8 +6,11 @@ import json
 import os
 import platform
 
+from native_build.config import Config, CONFIG_PATH, ROOT
+
 class CMake:
 
-    @staticmethod
-    def update():
-        pass
+    @classmethod
+    def sync(cls):
+        proj = Config.read()
+

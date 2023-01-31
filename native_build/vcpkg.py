@@ -29,6 +29,18 @@ class VCPkg:
         return ROOT.joinpath("GitDependencies", "microsoft", "vcpkg")
 
     @classmethod
+    def library_directory(cls):
+        return cls.vcpkg_root().joinpath("installed", cls.get_target_triplet(), "lib")
+
+    @classmethod
+    def include_directory(cls):
+        return cls.vcpkg_root().joinpath("installed", cls.get_target_triplet(), "include")
+
+    @classmethod
+    def binary_directory(cls):
+        return cls.vcpkg_root().joinpath("installed", cls.get_target_triplet(), "bin")
+
+    @classmethod
     def call_vcpkg_bootstrap(cls):
         if cls.vcpkg_root().joinpath("vcpkg.exe").exists():
             return
@@ -54,8 +66,8 @@ class VCPkg:
     def call_vcpkg(cls, *args: str):
         try:
             env = os.environ.copy()
-            env['VCPKG_DEFAULT_TRIPLET'] = cls.default_triplet()
-            env['VCPKG_DEFAULT_HOST_TRIPLET'] = cls.default_triplet()
+            env['VCPKG_DEFAULT_TRIPLET'] = cls.get_target_triplet()
+            env['VCPKG_DEFAULT_HOST_TRIPLET'] = cls.get_host_triplet()
 
             subprocess.check_call(
                 [
@@ -68,6 +80,14 @@ class VCPkg:
             print(Fore.RED + f"call vcpkg ({shlex.join(args)}) failed!" + Style.RESET_ALL)
             sys.exit(1)
 
+    @classmethod
+    def get_target_triplet(cls):
+        return cls.default_triplet()
+
+    @classmethod
+    def get_host_triplet(cls):
+        return cls.default_triplet()
+
     @staticmethod
     def default_triplet():
         if sys.platform.startswith("win32"):
@@ -75,12 +95,12 @@ class VCPkg:
                 if Config.read().get("always_mingw"):
                     return "x64-mingw-dynamic"
                 else:
-                    return "x64-windows-dynamic"
+                    return "x64-windows"
             else:
                 if Config.read().get("always_mingw"):
                     return "x86-mingw-dynamic"
                 else:
-                    return "x86-windows-dynamic"
+                    return "x86-windows"
         elif sys.platform.startswith("linux"):
             if check64bit():
                 return "x64-linux"

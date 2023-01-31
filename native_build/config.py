@@ -33,8 +33,7 @@ class Config:
         if data is not None:
             return typing.cast(Project, data)
         data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-        msg = validate_project(data)
-        if not msg:
+        if not (msg := validate_project(data)):
             print(Fore.RED + str(msg) + Style.RESET_ALL)
             sys.exit(1)
         cls.CONFIG_DATA = data

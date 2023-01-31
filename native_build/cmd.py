@@ -24,7 +24,7 @@ class Cmd:
         deps = proj.get("dependencies", [])
         if package_name not in deps:
             deps.append(package_name)
-            VCPkg.call_vcpkg("install", package_name)
+            VCPkg.call_vcpkg("install", package_name + ':' + VCPkg.default_triplet())
         proj["dependencies"] = deps
         Config.write()
         print(Fore.GREEN + f"install {package_name} success!")
@@ -34,7 +34,7 @@ class Cmd:
         proj = Config.read()
         deps = proj.get("dependencies", [])
         if package_name in deps:
-            VCPkg.call_vcpkg("remove", package_name)
+            VCPkg.call_vcpkg("remove", package_name + ':' + VCPkg.default_triplet())
             deps.remove(package_name)
         proj["dependencies"] = deps
         Config.write()
