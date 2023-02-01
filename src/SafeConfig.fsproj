@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ajson.fs" />
+    <Compile Include="types.fs" />
+    <Compile Include="api.fs" />
+    <Compile Include="stdlib.fs" />
+    <Compile Include="main.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fable.Core" Version="4.0.0-theta-007" />
+  </ItemGroup>
+</Project>
