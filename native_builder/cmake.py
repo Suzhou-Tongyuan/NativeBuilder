@@ -69,6 +69,7 @@ class CMake:
         print("# https://cmake.org/cmake/help/latest/module/GenerateExportHeader.html", file=buf)
         print("set(CMAKE_CXX_VISIBILITY_PRESET hidden)", file=buf)
         print("set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)", file=buf)
+        print("set(CMAKE_EXPORT_COMPILE_COMMANDS 1)", file=buf)
 
         print(file=buf)
 
