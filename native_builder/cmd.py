@@ -7,6 +7,18 @@ from native_builder.vcpkg import VCPkg
 from native_builder.cmake import CMake
 from colorama import Fore, Style
 
+VSCODE_INTELLISENSE_CONF = r"""
+{
+    "configurations": [
+        {
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}
+"""
+
 class Cmd:
     @staticmethod
     def init(vcpkg_url: str = r"https://github.com/microsoft/vcpkg"):
@@ -17,6 +29,9 @@ class Cmd:
 
         VCPkg.call_vcpkg_bootstrap()
         CMake.sync()
+        c_cpp_prop_file = ROOT.joinpath(".vscode", "c_cpp_properties.json")
+        c_cpp_prop_file.parent.mkdir(parents=True, exist_ok=True, mode=0o777)
+        c_cpp_prop_file.write_text(VSCODE_INTELLISENSE_CONF, encoding="utf-8")
         print(Fore.GREEN + "project init success!" + Style.RESET_ALL)
 
     @staticmethod
