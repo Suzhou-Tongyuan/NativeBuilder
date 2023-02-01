@@ -95,16 +95,19 @@ class CMake:
 
         print(file=buf)
 
-        print("if (BUILD_SHARED_LIBS)", file=buf)
-        print("    add_library(${PROJECT_NAME} SHARED src/library.cpp)", file=buf)
-        print("    include(GenerateExportHeader)", file=buf)
-        print("    GENERATE_EXPORT_HEADER(${PROJECT_NAME}", file=buf)
-        print("        EXPORT_FILE_NAME {}_export.h".format(proj.name.lower()), file=buf)
-        print("        EXPORT_MACRO_NAME {}_EXPORT".format(proj.name.upper()), file=buf)
-        print("    )", file=buf)
-        print("else()", file=buf)
-        print("    add_executable(${PROJECT_NAME} src/main.cpp)", file=buf)
-        print("endif()", file=buf)
+        proj.type = proj.type or "executable"
+        if proj.type == "library":
+            print("add_library(${PROJECT_NAME} SHARED src/library.cpp)", file=buf)
+            print("include(GenerateExportHeader)", file=buf)
+            print("GENERATE_EXPORT_HEADER(${PROJECT_NAME}", file=buf)
+            print("  EXPORT_FILE_NAME {}_export.h".format(proj.name.lower()), file=buf)
+            print("  EXPORT_MACRO_NAME {}_EXPORT".format(proj.name.upper()), file=buf)
+            print(")", file=buf)
+        elif proj.type == "executable":
+            print("    add_executable(${PROJECT_NAME} src/main.cpp)", file=buf)
+        else:
+            print(Fore.RED + "Invalid project type: '{}', expect 'executable' or 'library'".format(proj.type) + Style.RESET_ALL)
+            sys.exit(1)
 
         for lib in get_all_libraries(target_directory.joinpath("lib")):
             print("target_link_libraries(${PROJECT_NAME} %s)" % lib, file=buf)
