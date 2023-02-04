@@ -6,3 +6,4 @@ mv -T $PACKAGE ../$PACKAGE
 rm -rf $PACKAGE
 cd ..
 python genheader.py $PACKAGE
+rm safe_config/fable_modules/.gitignore
