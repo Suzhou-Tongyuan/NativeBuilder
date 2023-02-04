@@ -1,11 +1,12 @@
 import sys
 import os
 from wisepy2 import wise
+from colorama import Fore, Style
+from contextlib import contextmanager
 from native_builder.config import CONFIG_PATH, ROOT, Config
 from native_builder.git import git_dep
 from native_builder.vcpkg import VCPkg
 from native_builder.cmake import CMake
-from colorama import Fore, Style
 
 VSCODE_INTELLISENSE_CONF = r"""
 {
@@ -18,6 +19,15 @@ VSCODE_INTELLISENSE_CONF = r"""
     "version": 4
 }
 """
+
+@contextmanager
+def use_cwd(dir):
+    cur_wd = os.getcwd()
+    try:
+        os.chdir(dir)
+        yield
+    finally:
+        os.chdir(cur_wd)
 
 class Cmd:
     @staticmethod
@@ -81,15 +91,16 @@ class Cmd:
         CMake.sync()
         build_dir = ROOT.joinpath("build")
         build_dir.mkdir(exist_ok=True, parents=True, mode=0o777)
-        os.chdir(build_dir)
-        if "windows" in VCPkg.get_host_triplet():
-            # TODO: support earlier version of visual studio
-            generator = "Visual Studio 17 2022"
-        else:
-            generator = "Unix Makefiles"
-        CMake.call_cmake('-G', generator, "..")
-        CMake.call_cmake("--build", ".", '--config', 'Release')
-        CMake.copy_binary()
+
+        with use_cwd(build_dir):
+            if "windows" in VCPkg.get_host_triplet():
+                # TODO: support earlier version of visual studio
+                generator = "Visual Studio 17 2022"
+            else:
+                generator = "Unix Makefiles"
+            CMake.call_cmake('-G', generator, "..")
+            CMake.call_cmake("--build", ".", '--config', 'Release')
+            CMake.copy_binary()
 
 def main():
     wise(Cmd)()

@@ -1,10 +1,12 @@
 # NativeBuilder
 
-NativeBuilder is an easy-to-use tool for building native applications.
+NativeBuilder is an easy-to-use and cross-platform tool for building native applications leveraging the power of VCPkg and CMake.
+
+Currently, NativeBuilder is internal only and not ready for production use. It is made public for reproducing native binaries referenced in our Julia+C/C++ projects and creating templates for technical tests.
 
 ## Usage
 
-```
+```shell
 nb init          # init project
 nb install yoga  # install dependencies
 nb remove raylib # remove dependencies
