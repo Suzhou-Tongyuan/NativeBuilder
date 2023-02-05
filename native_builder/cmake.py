@@ -145,10 +145,9 @@ class CMake:
             print("add_executable(${PROJECT_NAME} %s %s_export.h)" % (main, proj.name.lower()), file=buf)
 
             # compat library code
-            print("add_compile_definitions({}_EXPORT)".format(proj.name.upper()), file=buf)
             print("add_custom_command(", file=buf)
             print("    OUTPUT ${CMAKE_BINARY_DIR}/%s_export.h" % proj.name.lower(), file=buf)
-            print("    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_BINARY_DIR}/%s_export.h" % proj.name.lower(), file=buf)
+            print("    COMMAND ${CMAKE_COMMAND} -E echo \"#define %s_EXPORT\" > ${CMAKE_BINARY_DIR}/%s_export.h" % (proj.name.upper(), proj.name.lower()), file=buf)
             print(")", file=buf)
 
         elif not Config.use_main and (library := proj.library):
