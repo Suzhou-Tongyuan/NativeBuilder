@@ -11,6 +11,7 @@ type Project = {
     author : Author option;
     version : string option;
     always_mingw : bool option;
-    ``type``: string option;
+    main: string option;
+    library: string option;
     cpp_standard: string option;
 }

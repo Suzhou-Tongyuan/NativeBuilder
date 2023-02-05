@@ -16,7 +16,7 @@ class Author(Record):
 Author_reflection = _expr0
 
 def _expr1() -> TypeInfo:
-    return record_type("NativeBuilder.Types.Project", [], Project, lambda: [("name", string_type), ("dependencies", option_type(array_type(string_type))), ("author", option_type(Author_reflection())), ("version", option_type(string_type)), ("always_mingw", option_type(bool_type)), ("type", option_type(string_type)), ("cpp_standard", option_type(string_type))])
+    return record_type("NativeBuilder.Types.Project", [], Project, lambda: [("name", string_type), ("dependencies", option_type(array_type(string_type))), ("author", option_type(Author_reflection())), ("version", option_type(string_type)), ("always_mingw", option_type(bool_type)), ("main", option_type(string_type)), ("library", option_type(string_type)), ("cpp_standard", option_type(string_type))])
 
 
 @dataclass(eq = False, repr = False)
@@ -26,7 +26,8 @@ class Project(Record):
     author: Optional[Author]
     version: Optional[str]
     always_mingw: Optional[bool]
-    type: Optional[str]
+    main: Optional[str]
+    library: Optional[str]
     cpp_standard: Optional[str]
 
 Project_reflection = _expr1
