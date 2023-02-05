@@ -72,6 +72,7 @@ class CMake:
         proj = Config.read()
 
         print("cmake_minimum_required(VERSION 3.21)", file=buf)
+        print("include(GenerateExportHeader)", file=buf)
         print(
             "project({} VERSION {})".format(proj.name, proj.version or "0.0.1"),
             file=buf,
@@ -126,29 +127,41 @@ class CMake:
 
         print(file=buf)
 
-        print("include_directories(${CMAKE_SOURCE_DIR}/include)", file=buf)
-        print("include_directories(${CMAKE_CURRENT_BINARY_DIR})", file=buf)
+        for includeDir in proj.include or []:
+            includeDirResolved = Path("${CMAKE_SOURCE_DIR}").joinpath(includeDir).as_posix()
+            print("include_directories({})".format(includeDirResolved), file=buf)
+        print("include_directories(${CMAKE_BINARY_DIR})", file=buf)
 
         print(file=buf)
 
-        if library := proj.library:
+
+        if Config.use_main:
+            if proj.main is None:
+                proj.main = "src/main.cpp"
+
+            main = proj.main
+            main = assure_cxx_source_file(main)
+
+            print("add_executable(${PROJECT_NAME} %s %s_export.h)" % (main, proj.name.lower()), file=buf)
+
+            # compat library code
+            print("add_compile_definitions({}_EXPORT)".format(proj.name.upper()), file=buf)
+            print("add_custom_command(", file=buf)
+            print("    OUTPUT ${CMAKE_BINARY_DIR}/%s_export.h" % proj.name.lower(), file=buf)
+            print("    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_BINARY_DIR}/%s_export.h" % proj.name.lower(), file=buf)
+            print(")", file=buf)
+
+        elif not Config.use_main and (library := proj.library):
             library = assure_cxx_source_file(library)
             print(
-                "add_library(${{PROJECT_NAME}} SHARED src/{}.cpp)".format(library),
+                "add_library(${{PROJECT_NAME}} SHARED {})".format(library),
                 file=buf,
             )
-            print("include(GenerateExportHeader)", file=buf)
+
             print("GENERATE_EXPORT_HEADER(${PROJECT_NAME}", file=buf)
             print("  EXPORT_FILE_NAME {}_export.h".format(proj.name.lower()), file=buf)
             print("  EXPORT_MACRO_NAME {}_EXPORT".format(proj.name.upper()), file=buf)
             print(")", file=buf)
-
-        if proj.main is None:
-            proj.main = "main.cpp"
-
-        if main := proj.main:
-            main = assure_cxx_source_file(main)
-            print("    add_executable(${{PROJECT_NAME}} {})".format(main), file=buf)
 
         for lib in get_all_libraries(target_directory.joinpath("lib")):
             print("target_link_libraries(${PROJECT_NAME} %s)" % lib, file=buf)

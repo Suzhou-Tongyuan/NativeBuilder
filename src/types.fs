@@ -13,5 +13,6 @@ type Project = {
     always_mingw : bool option;
     main: string option;
     library: string option;
+    ``include``: string System.Collections.Generic.List option;
     cpp_standard: string option;
 }

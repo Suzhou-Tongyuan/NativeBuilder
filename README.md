@@ -10,7 +10,8 @@ Currently, NativeBuilder is internal only and not ready for production use. It i
 nb init          # init project
 nb install yoga  # install dependencies
 nb remove raylib # remove dependencies
-nb build         # create executable under build/
+nb build --main  # create the executable under build/
+nb build         # create the library under build/
 ```
 
 Note that NativeBuilder is still in development, and is not responsible for dependency management.

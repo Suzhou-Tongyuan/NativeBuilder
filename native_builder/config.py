@@ -25,6 +25,7 @@ CONFIG_PATH = ROOT.joinpath("native-build.json")
 
 class Config:
     CONFIG_DATA: Project | None = None
+    use_main: bool = False
 
 
     @classmethod

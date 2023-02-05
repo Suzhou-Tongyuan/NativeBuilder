@@ -81,9 +81,12 @@ class Cmd:
         print(Fore.GREEN + "clean success!" + Style.RESET_ALL)
 
     @staticmethod
-    def build(noCache: bool = False):
+    def build(noCache: bool = False, main: bool = False):
         if noCache:
             Cmd.clean()
+
+        if main:
+            Config.use_main = True
 
         for each in Config.read().dependencies or []:
             Cmd.install(each)
