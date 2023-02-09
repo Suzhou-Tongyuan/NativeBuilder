@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-version = 0.1
+version = 0.2
 with Path('README.md').open() as readme:
     readme = readme.read()
 
@@ -17,8 +17,8 @@ setup(
     long_description_content_type="text/markdown",
     license='mit',
     python_requires='>=3.6.0',
-    url='https://github.com/Suzhou-Tongyuan/Native-Builder',
-    author='Suzhou-Tongyuan',
+    url='https://github.com/Suzhou-Tongyuan/NativeBuilder',
+    author='TongYuan',
     author_email='support@tongyuan.cc',
     packages=find_packages(),
     package_data={
@@ -41,5 +41,3 @@ setup(
     ],
     zip_safe=False,
 )
-
-
