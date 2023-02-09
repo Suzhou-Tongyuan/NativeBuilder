@@ -8,3 +8,4 @@ cd ..
 python genheader.py $PACKAGE
 rm safe_config/fable_modules/.gitignore
 rm safe_config/fable_modules/project_cracked.json
+python bundle-vcpkg.py

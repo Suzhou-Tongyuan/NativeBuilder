@@ -3,6 +3,8 @@ import os
 from wisepy2 import wise
 from colorama import Fore, Style
 from contextlib import contextmanager
+from shutil import unpack_archive
+from importlib.resources import path
 from native_builder.config import CONFIG_PATH, ROOT, Config
 from native_builder.git import git_dep
 from native_builder.vcpkg import VCPkg
@@ -35,7 +37,10 @@ class Cmd:
         VCPkg.init_config()
         print(Fore.GREEN + "creating vcpkg cache..." + Style.RESET_ALL)
 
-        git_dep("microsoft/vcpkg", vcpkg_url)
+        with path("native_builder.data", "vcpkg.zip") as zipfile:
+            unpack_archive(zipfile.as_posix(), "microsoft")
+
+        # git_dep("microsoft/vcpkg", vcpkg_url)
 
         VCPkg.call_vcpkg_bootstrap()
         CMake.sync()

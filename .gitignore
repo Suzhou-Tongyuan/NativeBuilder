@@ -1,6 +1,7 @@
 bin/
 obj/
 /fable_library/
+native_builder/data
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

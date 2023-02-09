@@ -9,7 +9,7 @@ with Path('README.md').open() as readme:
 
 
 setup(
-    name='native_builder',
+    name='native-builder',
     version=version if isinstance(version, str) else str(version),
     keywords="", # keywords of your project that separated by comma ","
     description="", # a concise introduction of your project
@@ -21,6 +21,9 @@ setup(
     author='Suzhou-Tongyuan',
     author_email='support@tongyuan.cc',
     packages=find_packages(),
+    package_data={
+        'native_builder': ['data/vcpkg.zip']
+    },
     entry_points={"console_scripts": [
         'nb=native_builder.cmd:main'
     ]},
