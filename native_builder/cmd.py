@@ -106,7 +106,7 @@ class Cmd:
                 generator = "Visual Studio 17 2022"
             else:
                 generator = "Unix Makefiles"
-            CMake.call_cmake('-G', generator, "..")
+            CMake.call_cmake('-G', generator, "..", '-DCMAKE_BUILD_TYPE=Release')
             CMake.call_cmake("--build", ".", '--config', 'Release')
             CMake.copy_binary()
 
