@@ -113,12 +113,6 @@ class CMake:
             "installed", VCPkg.get_target_triplet()
         )
         print(
-            "include_directories({})".format(
-                target_directory.joinpath("include").absolute().as_posix()
-            ),
-            file=buf,
-        )
-        print(
             "link_directories({})".format(
                 target_directory.joinpath("lib").absolute().as_posix()
             ),
@@ -126,14 +120,6 @@ class CMake:
         )
 
         print(file=buf)
-
-        for includeDir in proj.include or []:
-            includeDirResolved = Path("${CMAKE_SOURCE_DIR}").joinpath(includeDir).as_posix()
-            print("include_directories({})".format(includeDirResolved), file=buf)
-        print("include_directories(${CMAKE_BINARY_DIR})", file=buf)
-
-        print(file=buf)
-
 
         if Config.use_main:
             if proj.main is None:
@@ -161,6 +147,21 @@ class CMake:
             print("  EXPORT_FILE_NAME {}_export.h".format(proj.name.lower()), file=buf)
             print("  EXPORT_MACRO_NAME {}_EXPORT".format(proj.name.upper()), file=buf)
             print(")", file=buf)
+
+        print(
+            "target_include_directories(${{PROJECT_NAME}} PRIVATE {})".format(
+                target_directory.joinpath("include").absolute().as_posix()
+            ),
+            file=buf,
+        )
+
+        for includeDir in proj.include or []:
+            includeDirResolved = Path("${CMAKE_SOURCE_DIR}").joinpath(includeDir).as_posix()
+            print("target_include_directories(${{PROJECT_NAME}} PUBLIC {})".format(includeDirResolved), file=buf)
+        print("target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_BINARY_DIR})", file=buf)
+
+        print(file=buf)
+
 
         for lib in get_all_libraries(target_directory.joinpath("lib")):
             print("target_link_libraries(${PROJECT_NAME} %s)" % lib, file=buf)

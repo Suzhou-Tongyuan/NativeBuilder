@@ -1,5 +1,6 @@
 import sys
 import os
+import stat
 from wisepy2 import wise
 from colorama import Fore, Style
 from contextlib import contextmanager
@@ -38,7 +39,10 @@ class Cmd:
         print(Fore.GREEN + "creating vcpkg cache..." + Style.RESET_ALL)
 
         with path("native_builder.data", "vcpkg.zip") as zipfile:
-            unpack_archive(zipfile.as_posix(), "microsoft")
+            unpack_archive(zipfile.as_posix(), "GitDependencies/microsoft/vcpkg")
+
+        # chmod GitDependencies/microsoft/vcpkg/bootstrap-vcpkg.sh for execute permission
+        os.chmod("GitDependencies/microsoft/vcpkg/bootstrap-vcpkg.sh",  stat.S_IREAD | stat.S_IEXEC)
 
         # git_dep("microsoft/vcpkg", vcpkg_url)
 
